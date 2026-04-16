@@ -26,11 +26,10 @@ class VendorRequest extends FormRequest
     {
         return [
             'name' => 'required|min:3|max:255',
-            'email_address' => 'required|email|max:255',
             'country_id' => 'required|integer',
             'vendor_type_id' => 'required|integer',
             'website_url' => 'nullable|url|max:255',
-            'logo' => 'nullable|image|max:2048',
+            'logo' => $this->hasFile('logo') ? 'image|max:2048' : 'nullable',
         ];
     }
 

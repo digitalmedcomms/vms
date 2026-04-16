@@ -110,13 +110,55 @@ class VendorCrudController extends CrudController
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    /**
+     * Handle the update request — ensures contacts (view-type field)
+     * and logo (upload field) are saved correctly.
+     */
+    public function update($id = null)
+    {
+        $this->crud->hasAccessOrFail('update');
+
+        $request = $this->crud->validateRequest();
+
+        // Register any Model Events defined on fields
+        $this->crud->registerFieldEvents();
+
+        // Get the standard stripped save data (view-type fields are excluded by Backpack)
+        $data = $this->crud->getStrippedSaveRequest($request);
+
+        // Manually include contacts (JSON string from the hidden input)
+        if ($request->has('contacts')) {
+            $raw = $request->input('contacts');
+            $data['contacts'] = is_string($raw) ? json_decode($raw, true) : $raw;
+        }
+
+        // Skip logo if no new file was uploaded (prevents clearing the existing logo)
+        if (!$request->hasFile('logo')) {
+            unset($data['logo']);
+        }
+
+        // Stamp updated_by / updated_when
+        $data['updated_by']   = backpack_user()->id;
+        $data['updated_when'] = now();
+
+        $entryId = $request->get($this->crud->model->getKeyName()) ?? $id;
+        $item = $this->crud->update($entryId, $data);
+        $this->data['entry'] = $this->crud->entry = $item;
+
+        \Alert::success(trans('backpack::crud.update_success'))->flash();
+
+        $this->crud->setSaveAction();
+
+        return $this->crud->performSaveAction($item->getKey());
     }
 
     protected function setupShowOperation()

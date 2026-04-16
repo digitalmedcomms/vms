@@ -42,11 +42,14 @@ class Vendor extends Model
 
     public function setLogoAttribute($value)
     {
-        $attribute_name = "logo";
-        $disk = "public";
-        $destination_path = "vendors/logos";
+        // Only upload when a real file is provided; skip empty/null to preserve the existing logo
+        if ($value && $value instanceof \Illuminate\Http\UploadedFile) {
+            $attribute_name = "logo";
+            $disk = "public";
+            $destination_path = "vendors/logos";
 
-        $this->uploadFileToDisk($value, $attribute_name, $disk, $destination_path);
+            $this->uploadFileToDisk($value, $attribute_name, $disk, $destination_path);
+        }
     }
 
     public function country()

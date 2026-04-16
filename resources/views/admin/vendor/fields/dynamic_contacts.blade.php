@@ -4,6 +4,7 @@
         $field['value'] = json_encode($field['value']);
     }
     $field_id = 'field_'.Str::slug($field['name']);
+    $field_value = $field['value'] ?: '[]';
 @endphp
 
 @include('crud::fields.inc.wrapper_start')
@@ -20,17 +21,17 @@
                     <th style="width: 40px;"></th>
                 </tr>
             </thead>
-            <tbody class="contacts-body">
+            <tbody id="{{ $field_id }}_body">
                 {{-- Rows added by JS --}}
             </tbody>
         </table>
-        <button type="button" class="btn btn-sm btn-outline-primary add-contact-btn">
+        <button type="button" id="{{ $field_id }}_add_btn" class="btn btn-sm btn-outline-primary">
             <i class="la la-plus"></i> Add Contact Person
         </button>
-    </div>
 
-    {{-- Hidden input to store the JSON string --}}
-    <input type="hidden" name="{{ $field['name'] }}" class="contacts-json-input" value="{{ $field['value'] }}">
+        {{-- Hidden input to store the JSON string --}}
+        <input type="hidden" id="{{ $field_id }}_input" name="{{ $field['name'] }}" value="{{ $field_value }}">
+    </div>
 
     {{-- HINT --}}
     @if (isset($field['hint']))
@@ -38,7 +39,7 @@
     @endif
 @include('crud::fields.inc.wrapper_end')
 
-{{-- FIELD EXTRA CSS --}}
+{{-- CSS --}}
 @push('crud_fields_styles')
 <style>
     .dynamic-contacts-container th { letter-spacing: 0.5px; color: #666; }
@@ -48,79 +49,65 @@
 </style>
 @endpush
 
-{{-- FIELD EXTRA JS --}}
-@push('crud_fields_scripts')
+{{-- JS — inline so it always runs immediately after the HTML is rendered --}}
 <script type="text/javascript">
-    if (typeof bpDynamicContactsInit !== 'function') {
-        function bpDynamicContactsInit(containerId) {
-            const wrapper = document.getElementById(containerId);
-            if (!wrapper) return;
+(function() {
+    var fieldId = '{{ $field_id }}';
+    var body    = document.getElementById(fieldId + '_body');
+    var input   = document.getElementById(fieldId + '_input');
+    var addBtn  = document.getElementById(fieldId + '_add_btn');
 
-            const body = wrapper.querySelector('.contacts-body');
-            const input = wrapper.closest('.form-group').querySelector('.contacts-json-input');
-            const addBtn = wrapper.querySelector('.add-contact-btn');
-            
-            let contacts = [];
-            try {
-                contacts = JSON.parse(input.value || '[]');
-            } catch (e) {
-                contacts = [];
-            }
+    if (!body || !input || !addBtn) { return; }
 
-            function updateInput() {
-                const rows = body.querySelectorAll('tr');
-                const newContacts = [];
-                rows.forEach(row => {
-                    const name = row.querySelector('.contact-name').value.trim();
-                    const number = row.querySelector('.contact-number').value.trim();
-                    const email = row.querySelector('.contact-email').value.trim();
-                    if (name || number || email) {
-                        newContacts.push({ name, number, email });
-                    }
-                });
-                input.value = JSON.stringify(newContacts);
-            }
-
-            function addRow(contact = { name: '', number: '', email: '' }) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><input type="text" class="form-control form-control-sm contact-name" value="${contact.name || ''}" placeholder="Full Name"></td>
-                    <td><input type="text" class="form-control form-control-sm contact-number" value="${contact.number || ''}" placeholder="Phone Number"></td>
-                    <td><input type="email" class="form-control form-control-sm contact-email" value="${contact.email || ''}" placeholder="Email Address"></td>
-                    <td class="text-center align-middle"><i class="la la-trash remove-contact-btn" title="Remove"></i></td>
-                `;
-                
-                tr.querySelector('.remove-contact-btn').onclick = function() {
-                    tr.remove();
-                    updateInput();
-                };
-
-                tr.querySelectorAll('input').forEach(el => {
-                    el.oninput = updateInput;
-                });
-
-                body.appendChild(tr);
-            }
-
-            // Load existing
-            if (contacts.length > 0) {
-                contacts.forEach(c => addRow(c));
-            } else {
-                addRow();
-            }
-
-            addBtn.onclick = function() {
-                addRow();
-                updateInput();
-            };
-        }
+    function escAttr(str) {
+        return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     }
 
-    // Initialize the field
-    (function() {
-        const id = '{{ $field_id }}_container';
-        // Use a small timeout to ensure DOM is ready if script is pushed early
-        setTimeout(() => bpDynamicContactsInit(id), 10);
-    })();
+    function updateInput() {
+        var rows = body.querySelectorAll('tr');
+        var result = [];
+        rows.forEach(function(row) {
+            var name   = row.querySelector('.contact-name').value.trim();
+            var number = row.querySelector('.contact-number').value.trim();
+            var email  = row.querySelector('.contact-email').value.trim();
+            if (name || number || email) {
+                result.push({ name: name, number: number, email: email });
+            }
+        });
+        input.value = JSON.stringify(result);
+    }
+
+    function addRow(contact) {
+        contact = contact || {};
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td><input type="text" class="form-control form-control-sm contact-name" value="' + escAttr(contact.name) + '" placeholder="Full Name"></td>' +
+            '<td><input type="text" class="form-control form-control-sm contact-number" value="' + escAttr(contact.number) + '" placeholder="Phone Number"></td>' +
+            '<td><input type="email" class="form-control form-control-sm contact-email" value="' + escAttr(contact.email) + '" placeholder="Email Address"></td>' +
+            '<td class="text-center align-middle"><i class="la la-trash remove-contact-btn" title="Remove"></i></td>';
+
+        tr.querySelector('.remove-contact-btn').addEventListener('click', function() {
+            tr.parentNode.removeChild(tr);
+            updateInput();
+        });
+        tr.querySelectorAll('input').forEach(function(el) {
+            el.addEventListener('input', updateInput);
+        });
+
+        body.appendChild(tr);
+    }
+
+    var contacts = [];
+    try { contacts = JSON.parse(input.value || '[]'); } catch(e) { contacts = []; }
+
+    if (contacts.length > 0) {
+        contacts.forEach(function(c) { addRow(c); });
+    } else {
+        addRow();
+    }
+
+    addBtn.addEventListener('click', function() {
+        addRow();
+    });
+})();
 </script>
-@endpush
