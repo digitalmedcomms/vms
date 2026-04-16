@@ -112,8 +112,135 @@
                 <div class="table-responsive rounded shadow-sm">
                     @include('vendor.backpack.ui.columns.vendor_comments_list')
                 </div>
+
+                <hr class="my-4">
+
+                @if($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+
+                <div class="card shadow-sm" style="border: 1px solid #e3e6f0; border-radius: 8px; overflow: hidden;">
+                    <div class="card-header d-flex align-items-center py-2 px-3" style="background: #f8f9fc; border-bottom: 1px solid #e3e6f0;">
+                        <i class="la la-edit mr-1 text-primary"></i>
+                        <span class="font-weight-bold small">Add a Comment</span>
+                    </div>
+                    <div class="card-body px-3 py-3">
+                        <form method="POST" action="{{ url(config('backpack.base.route_prefix') . '/vendor/' . $entry->id . '/comment') }}">
+                            @csrf
+
+                            <div class="form-group mb-2">
+                                <label class="small font-weight-bold mb-1">Rating <span class="text-danger">*</span></label>
+                                <div class="d-flex align-items-center">
+                                    <div class="star-rating d-flex flex-row-reverse" style="gap: 2px;">
+                                        @for($i = 5; $i >= 1; $i--)
+                                            <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}"
+                                                class="d-none star-input"
+                                                {{ old('rating') == $i ? 'checked' : '' }}>
+                                            <label for="star{{ $i }}" class="star-label mb-0" title="{{ $i }} star{{ $i > 1 ? 's' : '' }}"
+                                                style="cursor: pointer; font-size: 1.4rem; color: #d1d5db; transition: color 0.1s, transform 0.1s;">
+                                                <i class="la la-star"></i>
+                                            </label>
+                                        @endfor
+                                    </div>
+                                    <span id="ratingText" class="text-muted ml-3" style="font-size: 0.78rem;">
+                                        {{ old('rating') ? old('rating') . ' / 5 stars' : 'Click to rate' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-2">
+                                <label class="small font-weight-bold mb-1" for="comment">Comment <span class="text-danger">*</span></label>
+                                <textarea id="comment" name="comment" rows="3"
+                                    class="form-control form-control-sm"
+                                    placeholder="Write your comment here…"
+                                    maxlength="1000">{{ old('comment') }}</textarea>
+                                <div class="text-right">
+                                    <small class="text-muted" style="font-size: 0.72rem;"><span id="charCount">{{ strlen(old('comment', '')) }}</span> / 1000</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="la la-paper-plane mr-1"></i> Submit Comment
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('after_styles')
+<style>
+    .star-label:hover {
+        transform: scale(1.2);
+    }
+</style>
+@endpush
+
+@push('after_scripts')
+<script>
+(function () {
+    var labels     = document.querySelectorAll('.star-label');
+    var inputs     = document.querySelectorAll('.star-input');
+    var ratingText = document.getElementById('ratingText');
+    var charCount  = document.getElementById('charCount');
+    var textarea   = document.getElementById('comment');
+
+    var ratingLabels = { 1: '1 / 5 – Poor', 2: '2 / 5 – Fair', 3: '3 / 5 – Good', 4: '4 / 5 – Very Good', 5: '5 / 5 – Excellent' };
+
+    function applyStarColour(selectedVal) {
+        labels.forEach(function (label, idx) {
+            var starVal = 5 - idx;
+            label.querySelector('i').style.color = starVal <= selectedVal ? '#f6b93b' : '#d1d5db';
+        });
+    }
+
+    // On change (click)
+    inputs.forEach(function (input) {
+        input.addEventListener('change', function () {
+            var val = parseInt(this.value);
+            applyStarColour(val);
+            if (ratingText) ratingText.textContent = ratingLabels[val] || '';
+        });
+
+        // Restore colour from old('rating') on page load
+        if (input.checked) {
+            input.dispatchEvent(new Event('change'));
+        }
+    });
+
+    // Hover preview
+    labels.forEach(function (label, idx) {
+        var hoverVal = 5 - idx;
+        label.addEventListener('mouseenter', function () {
+            applyStarColour(hoverVal);
+        });
+        label.addEventListener('mouseleave', function () {
+            var checked = document.querySelector('.star-input:checked');
+            applyStarColour(checked ? parseInt(checked.value) : 0);
+        });
+    });
+
+    // Character counter
+    if (textarea && charCount) {
+        charCount.textContent = textarea.value.length;
+        textarea.addEventListener('input', function () {
+            charCount.textContent = this.value.length;
+        });
+    }
+})();
+</script>
+@endpush
 @endsection

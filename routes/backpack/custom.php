@@ -23,6 +23,7 @@ Route::group([
     Route::crud('country', 'CountryCrudController');
     Route::crud('vendor-type', 'VendorTypeCrudController');
     Route::crud('vendor-comment', 'VendorCommentCrudController');
+    Route::post('vendor/{id}/comment', 'VendorCrudController@storeComment')->name('vendor.comment.store');
 }); // this should be the absolute last line of this file
 
 /**

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\VendorRequest;
+use App\Models\VendorComment;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Http\Request;
 
 /**
  * Class VendorCrudController
@@ -159,6 +161,28 @@ class VendorCrudController extends CrudController
         $this->crud->setSaveAction();
 
         return $this->crud->performSaveAction($item->getKey());
+    }
+
+    public function storeComment(Request $request, $id)
+    {
+        $this->crud->hasAccessOrFail('show');
+
+        $request->validate([
+            'rating'  => 'required|integer|min:1|max:5',
+            'comment' => 'required|string|max:1000',
+        ]);
+
+        VendorComment::create([
+            'vendor_id'   => $id,
+            'user_id'     => backpack_user()->userId,
+            'rating'      => $request->rating,
+            'comment'     => $request->comment,
+            'insert_date' => now()->toDateTimeString(),
+        ]);
+
+        \Alert::success('Comment added successfully.')->flash();
+
+        return redirect()->back();
     }
 
     protected function setupShowOperation()
