@@ -62,6 +62,18 @@
         </div>
     </div>
 
+    {{-- Documents / Files Section --}}
+    <div class="col-md-12 mb-4">
+        <div class="card border-0 shadow-sm rounded-lg overflow-hidden">
+            <div class="card-header text-white py-3" style="background:#6f42c1;">
+                <h5 class="mb-0"><i class="la la-paperclip"></i> Documents & Files</h5>
+            </div>
+            <div class="card-body p-4">
+                @include('admin.vendor.fields.vendor_documents', ['field' => $fields['vendor_documents'] ?? []])
+            </div>
+        </div>
+    </div>
+
     {{-- Online Presence Section --}}
     <div class="col-md-12">
         <div class="card border-0 shadow-sm rounded-lg overflow-hidden">

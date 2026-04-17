@@ -34,9 +34,7 @@
 
 		  <form method="post"
 		  		action="{{ url($crud->route) }}"
-				@if ($crud->hasUploadFields('create'))
 				enctype="multipart/form-data"
-				@endif
 		  		>
 		  {!! csrf_field() !!}
 

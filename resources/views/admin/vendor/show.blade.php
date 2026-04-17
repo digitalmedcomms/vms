@@ -60,9 +60,13 @@
                                     @endif
                                 </p>
                             </div>
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label class="font-weight-bold text-uppercase small text-muted">Address</label>
                                 <p class="mb-0 h6">{!!$entry->address ?? 'N/A' !!}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="font-weight-bold text-uppercase small text-muted">TIN</label>
+                                <p class="mb-0 h6">{{ $entry->tin ?? 'N/A' }}</p>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="font-weight-bold text-uppercase small text-muted">Contact Information</label>
@@ -78,9 +82,9 @@
                                         <tbody>
                                             @foreach($entry->contacts as $contact)
                                                 <tr>
-                                                    <td>{{ $contact['name'] ?? 'N/A' }}</td>
-                                                    <td>{{ $contact['number'] ?? 'N/A' }}</td>
-                                                    <td>{{ $contact['email'] ?? 'N/A' }}</td>
+                                                    <td>{{ ($contact['name'] ?? '') ?: 'N/A' }}</td>
+                                                    <td>{{ ($contact['number'] ?? '') ?: 'N/A' }}</td>
+                                                    <td>{{ ($contact['email'] ?? '') ?: 'N/A' }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -89,10 +93,54 @@
                                     <p class="mb-0 h6 text-muted">No contact persons listed.</p>
                                 @endif
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="font-weight-bold text-uppercase small text-muted">TIN</label>
-                                <p class="mb-0 h6">{{ $entry->tin ?? 'N/A' }}</p>
+                            {{-- Documents --}}
+                            <div class="col-md-12 mb-3">
+                                <label class="font-weight-bold text-uppercase small text-muted">Documents & Files</label>
+                                @php $docs = $entry->documents ?? []; @endphp
+                                @if(count($docs) > 0)
+                                    <table class="table table-sm table-bordered mt-1">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>File Name</th>
+                                                <th>Uploaded</th>
+                                                <th style="width:60px;" class="text-center">Open</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($docs as $doc)
+                                                @php
+                                                    $ext  = strtolower(pathinfo($doc['original_name'] ?? '', PATHINFO_EXTENSION));
+                                                    $icon = in_array($ext, ['jpg','jpeg','png','gif']) ? 'la-file-image'
+                                                          : ($ext === 'pdf'                            ? 'la-file-pdf'
+                                                          : (in_array($ext, ['doc','docx'])            ? 'la-file-word'
+                                                          : (in_array($ext, ['xls','xlsx'])            ? 'la-file-excel'
+                                                          : ($ext === 'zip'                            ? 'la-file-archive' : 'la-file'))));
+                                                @endphp
+                                                <tr>
+                                                    <td>
+                                                        <i class="la {{ $icon }} text-primary mr-1"></i>
+                                                        {{ $doc['original_name'] ?? $doc['stored_name'] ?? 'File' }}
+                                                    </td>
+                                                    <td>
+                                                        {{ !empty($doc['uploaded_at']) ? \Carbon\Carbon::parse($doc['uploaded_at'])->format('M d, Y') : '—' }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="{{ Storage::disk('public')->url($doc['path']) }}"
+                                                           target="_blank"
+                                                           title="Open file"
+                                                           class="btn btn-sm btn-outline-primary py-0 px-2">
+                                                            <i class="la la-external-link-alt"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <p class="mb-0 h6 text-muted">No documents uploaded.</p>
+                                @endif
                             </div>
+
                         </div>
                     </div>
                 </div>

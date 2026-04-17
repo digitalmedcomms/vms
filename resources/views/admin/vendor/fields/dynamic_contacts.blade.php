@@ -64,7 +64,7 @@
     }
 
     function updateInput() {
-        var rows = body.querySelectorAll('tr');
+        var rows   = body.querySelectorAll('tr');
         var result = [];
         rows.forEach(function(row) {
             var name   = row.querySelector('.contact-name').value.trim();
@@ -75,6 +75,30 @@
             }
         });
         input.value = JSON.stringify(result);
+        validateContacts(result);
+    }
+
+    function validateContacts(contacts) {
+        var hint = document.getElementById(fieldId + '_hint');
+        if (!hint) {
+            hint = document.createElement('p');
+            hint.id        = fieldId + '_hint';
+            hint.className = 'text-danger small mt-1 mb-0';
+            input.parentNode.insertBefore(hint, input.nextSibling);
+        }
+
+        if (contacts.length === 0) {
+            hint.textContent = 'At least one contact person is required.';
+            return;
+        }
+
+        var hasNumberOrEmail = contacts.some(function(c) {
+            return (c.number && c.number.trim()) || (c.email && c.email.trim());
+        });
+
+        hint.textContent = hasNumberOrEmail
+            ? ''
+            : 'At least one contact must have a phone number or email address.';
     }
 
     function addRow(contact) {

@@ -34,10 +34,12 @@ class Vendor extends Model
         'updated_by',
         'updated_when',
         'contacts',
+        'documents',
     ];
 
     protected $casts = [
-        'contacts' => 'array',
+        'contacts'  => 'array',
+        'documents' => 'array',
     ];
 
     public function setLogoAttribute($value)
