@@ -49,7 +49,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'password' => 'hashed',
+        // 'password' => 'hashed',
     ];
 
     public function setPasswordAttribute($value)
