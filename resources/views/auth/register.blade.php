@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | VMS</title>
+    <title>Register | VMS</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <style>
         :root {
@@ -24,17 +24,17 @@
 
         body {
             background: var(--bg);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            padding: 40px 0;
         }
 
-        .login-container {
+        .register-container {
             background: var(--white);
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
@@ -68,9 +68,19 @@
             margin-bottom: 30px;
         }
 
-        .form-group {
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             text-align: left;
+        }
+
+        .form-group {
             margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
         }
 
         label {
@@ -115,27 +125,10 @@
             transform: translateY(-1px);
         }
 
-        .btn:active {
-            transform: translateY(0);
-        }
-
         .error-message {
             color: var(--error);
             font-size: 12px;
             margin-top: 5px;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            font-size: 13px;
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-
-        .remember-me input {
-            width: auto;
-            margin-right: 8px;
         }
 
         .footer-links {
@@ -149,56 +142,78 @@
             text-decoration: none;
         }
 
-        .footer-links a:hover {
-            text-decoration: underline;
+        @media (max-width: 480px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="register-container">
         <div class="logo">
             <img src="/images/mimsLogo-mini.png" alt="MIMS Logo">
         </div>
-        <h1>Welcome Back</h1>
-        <p class="subtitle">Please enter your details to sign in.</p>
+        <h1>Create Account</h1>
+        <p class="subtitle">Join VMS to manage your vendors efficiently.</p>
 
-        @if(session('success'))
-            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; border: 1px solid #c3e6cb;">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('register') }}">
             @csrf
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="name@example.com">
-                @error('email')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" value="{{ old('name') }}" required autofocus placeholder="John Doe">
+                    @error('name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="name@example.com">
+                    @error('email')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="text" id="mobile" name="mobile" value="{{ old('mobile') }}" placeholder="+1234567890">
+                    @error('mobile')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="designation">Designation</label>
+                    <input type="text" id="designation" name="designation" value="{{ old('designation') }}" placeholder="Manager">
+                    @error('designation')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                    @error('password')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="password_confirmation">Confirm Password</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="••••••••">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required placeholder="••••••••">
-                @error('password')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="remember-me">
-                <input type="checkbox" name="remember" id="remember">
-                <label for="remember" style="margin-bottom: 0;">Remember me</label>
-            </div>
-
-            <button type="submit" class="btn">Sign In</button>
+            <button type="submit" class="btn">Register</button>
         </form>
 
         <div class="footer-links">
-            <p>Don't have an account? <a href="{{ route('register') }}">Create Account</a></p>
-            <div style="margin-top: 15px;">
-                &copy; {{ date('Y') }} MIMS VMS.
-            </div>
+            <p>Already have an account? <a href="{{ route('login') }}">Sign In</a></p>
         </div>
     </div>
 </body>

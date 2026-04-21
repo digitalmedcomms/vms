@@ -29,6 +29,10 @@ class CountryCrudController extends CrudController
         CRUD::setModel(\App\Models\Country::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/country');
         CRUD::setEntityNameStrings('country', 'countries');
+
+        if (backpack_user()->isAdmin != 1) {
+            $this->crud->denyAccess(['list', 'create', 'update', 'delete', 'show']);
+        }
     }
 
     /**

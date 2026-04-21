@@ -25,6 +25,21 @@ class LoginController extends Controller
         ]);
 
         if (Auth::guard('backpack')->attempt($credentials, $request->boolean('remember'))) {
+            $user = Auth::guard('backpack')->user();
+            
+            if ($user->status != 1) {
+                Auth::guard('backpack')->logout();
+                
+                $message = 'Your account is pending approval.';
+                if ($user->status == 100) {
+                    $message = 'Your account has been rejected.';
+                }
+                
+                return back()->withErrors([
+                    'email' => $message,
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
 
             return redirect()->intended('/admin/dashboard');

@@ -147,6 +147,11 @@
 
                 <hr class="my-4">
 
+                <div class="d-flex align-items-center justify-content-end mb-3">
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCommentModal">
+                        <i class="la la-plus mr-1"></i> Add Comment
+                    </button>
+                </div>
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h4 class="mb-0"><i class="la la-comments"></i> Vendor Comments</h4>
                     @php
@@ -176,54 +181,6 @@
                     </div>
                 @endif
 
-                <div class="card shadow-sm" style="border: 1px solid #e3e6f0; border-radius: 8px; overflow: hidden;">
-                    <div class="card-header d-flex align-items-center py-2 px-3" style="background: #f8f9fc; border-bottom: 1px solid #e3e6f0;">
-                        <i class="la la-edit mr-1 text-primary"></i>
-                        <span class="font-weight-bold small">Add a Comment</span>
-                    </div>
-                    <div class="card-body px-3 py-3">
-                        <form method="POST" action="{{ url(config('backpack.base.route_prefix') . '/vendor/' . $entry->id . '/comment') }}">
-                            @csrf
-
-                            <div class="form-group mb-2">
-                                <label class="small font-weight-bold mb-1">Rating <span class="text-danger">*</span></label>
-                                <div class="d-flex align-items-center">
-                                    <div class="star-rating d-flex flex-row-reverse" style="gap: 2px;">
-                                        @for($i = 5; $i >= 1; $i--)
-                                            <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}"
-                                                class="d-none star-input"
-                                                {{ old('rating') == $i ? 'checked' : '' }}>
-                                            <label for="star{{ $i }}" class="star-label mb-0" title="{{ $i }} star{{ $i > 1 ? 's' : '' }}"
-                                                style="cursor: pointer; font-size: 1.4rem; color: #d1d5db; transition: color 0.1s, transform 0.1s;">
-                                                <i class="la la-star"></i>
-                                            </label>
-                                        @endfor
-                                    </div>
-                                    <span id="ratingText" class="text-muted ml-3" style="font-size: 0.78rem;">
-                                        {{ old('rating') ? old('rating') . ' / 5 stars' : 'Click to rate' }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="form-group mb-2">
-                                <label class="small font-weight-bold mb-1" for="comment">Comment <span class="text-danger">*</span></label>
-                                <textarea id="comment" name="comment" rows="3"
-                                    class="form-control form-control-sm"
-                                    placeholder="Write your comment here…"
-                                    maxlength="1000">{{ old('comment') }}</textarea>
-                                <div class="text-right">
-                                    <small class="text-muted" style="font-size: 0.72rem;"><span id="charCount">{{ strlen(old('comment', '')) }}</span> / 1000</small>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="la la-paper-plane mr-1"></i> Submit Comment
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -234,10 +191,78 @@
     .star-label:hover {
         transform: scale(1.2);
     }
+    .modal{
+        z-index: 9999;
+    }
+    .modal .modal-dialog{
+        max-width: 700px;
+        width: 85%;
+    }
+
+    .modal .modal-dialog .btn.close{
+        font-size: 29px;
+        line-height: 1;
+    }
 </style>
 @endpush
 
 @push('after_scripts')
+
+                <!-- Add Comment Modal -->
+                <div class="modal fade" id="addCommentModal" tabindex="-1" role="dialog" aria-labelledby="addCommentModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content border-0 shadow-lg">
+                      <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="addCommentModalLabel"><i class="la la-comment-plus mr-1"></i> Add a Comment</h5>
+                        <button type="button" class="btn close text-white px-0 py-0 border-0" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <form method="POST" action="{{ url(config('backpack.base.route_prefix') . '/vendor/' . $entry->id . '/comment') }}">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group mb-3">
+                                <label class="small font-weight-bold mb-1">Rating <span class="text-danger">*</span></label>
+                                <div class="d-flex align-items-center">
+                                    <div class="star-rating d-flex flex-row-reverse" style="gap: 2px;">
+                                        @for($i = 5; $i >= 1; $i--)
+                                            <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}"
+                                                class="d-none star-input"
+                                                {{ old('rating') == $i ? 'checked' : '' }}>
+                                            <label for="star{{ $i }}" class="star-label mb-0" title="{{ $i }} star{{ $i > 1 ? 's' : '' }}"
+                                                style="cursor: pointer; font-size: 1.8rem; color: #d1d5db; transition: color 0.1s, transform 0.1s;">
+                                                <i class="la la-star"></i>
+                                            </label>
+                                        @endfor
+                                    </div>
+                                    <span id="ratingText" class="text-muted ml-3 small">
+                                        {{ old('rating') ? old('rating') . ' / 5 stars' : 'Click to rate' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="small font-weight-bold mb-1" for="comment">Comment <span class="text-danger">*</span></label>
+                                <textarea id="comment" name="comment" rows="4"
+                                    class="form-control"
+                                    placeholder="Tell us what you think about this vendor…"
+                                    maxlength="1000">{{ old('comment') }}</textarea>
+                                <div class="text-right mt-1">
+                                    <small class="text-muted"><span id="charCount">{{ strlen(old('comment', '')) }}</span> / 1000</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light">
+                            <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4">
+                                <i class="la la-paper-plane mr-1"></i> Submit Comment
+                            </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
 <script>
 (function () {
     var labels     = document.querySelectorAll('.star-label');
@@ -288,6 +313,11 @@
             charCount.textContent = this.value.length;
         });
     }
+
+    // Auto-open modal if there are errors
+    @if($errors->any())
+        $('#addCommentModal').modal('show');
+    @endif
 })();
 </script>
 @endpush

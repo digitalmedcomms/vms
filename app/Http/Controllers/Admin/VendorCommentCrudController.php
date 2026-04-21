@@ -29,6 +29,10 @@ class VendorCommentCrudController extends CrudController
         CRUD::setModel(\App\Models\VendorComment::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/vendor-comment');
         CRUD::setEntityNameStrings('vendor comment', 'vendor comments');
+
+        if (backpack_user()->isAdmin != 1) {
+            $this->crud->denyAccess(['list', 'create', 'update', 'delete', 'show']);
+        }
     }
 
     /**

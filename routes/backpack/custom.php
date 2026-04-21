@@ -18,6 +18,8 @@ Route::group([
 ], function () { // custom admin routes
     Route::get('dashboard', 'DashboardController@index')->name('backpack.dashboard');
     Route::crud('user', 'UserCrudController');
+    Route::post('user/{id}/approve', 'UserCrudController@approve')->name('user.approve');
+    Route::post('user/{id}/reject', 'UserCrudController@reject')->name('user.reject');
     Route::crud('role', 'RoleCrudController');
     Route::crud('vendor', 'VendorCrudController');
     Route::crud('country', 'CountryCrudController');

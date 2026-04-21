@@ -15,7 +15,7 @@ class UserCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
@@ -29,6 +29,10 @@ class UserCrudController extends CrudController
         CRUD::setModel(\App\Models\User::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
         CRUD::setEntityNameStrings('user', 'users');
+
+        if (backpack_user()->isAdmin != 1) {
+            $this->crud->denyAccess(['list', 'create', 'update', 'delete', 'show']);
+        }
     }
 
     /**
@@ -44,7 +48,14 @@ class UserCrudController extends CrudController
         CRUD::column('mobile');
         CRUD::column('roleId')->type('select')->label('Role')->entity('role')->attribute('role')->model('App\Models\Role');
         CRUD::column('isAdmin')->type('boolean')->label('Admin');
-        CRUD::column('status')->type('select_from_array')->options([0 => 'Inactive', 1 => 'Active']);
+        CRUD::column('status')->type('select_from_array')->options([
+            0 => 'For Approval',
+            1 => 'Active',
+            100 => 'Rejected'
+        ]);
+
+        CRUD::addButtonFromView('line', 'approve', 'approve', 'beginning');
+        CRUD::addButtonFromView('line', 'reject', 'reject', 'beginning');
     }
 
     /**
@@ -64,7 +75,31 @@ class UserCrudController extends CrudController
         CRUD::field('roleId')->type('select')->label('Role')->entity('role')->attribute('role')->model('App\Models\Role');
         CRUD::field('isAdmin')->type('boolean')->label('Admin');
         CRUD::field('designation');
-        CRUD::field('status')->type('select_from_array')->options([0 => 'Inactive', 1 => 'Active']);
+        CRUD::field('status')->type('select_from_array')->options([
+            0 => 'For Approval',
+            1 => 'Active',
+            100 => 'Rejected'
+        ])->default(0);
+    }
+
+    public function approve($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->status = 1;
+        $user->save();
+        
+        \Alert::success('User approved successfully.')->flash();
+        return redirect()->back();
+    }
+
+    public function reject($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->status = 100;
+        $user->save();
+        
+        \Alert::warning('User rejected.')->flash();
+        return redirect()->back();
     }
 
     /**
@@ -76,5 +111,20 @@ class UserCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+        
+        // Remove password requirement on update if not provided
+        // $this->crud->field('password')->attributes(['required' => false]);
+    }
+
+    public function update()
+    {
+        $request = $this->crud->validateRequest();
+
+        // If the password field is empty, remove it from the request so it's not updated
+        if (empty($request->password)) {
+            $request->request->remove('password');
+        }
+
+        return $this->traitUpdate();
     }
 }

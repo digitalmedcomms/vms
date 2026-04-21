@@ -1,5 +1,5 @@
 @php
-    $comments = $entry->comments()->with('user')->get();
+    $comments = $entry->comments()->with('user')->orderBy('insert_date', 'desc')->get();
 @endphp
 
 @if($comments->count())

@@ -52,6 +52,13 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function setPasswordAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class, 'roleId', 'roleId');
