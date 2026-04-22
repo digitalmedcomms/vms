@@ -88,6 +88,9 @@ class UserCrudController extends CrudController
         $user->status = 1;
         $user->save();
         
+        //On approve send email to user informing that the account is approved
+        Mail::to($user->email)->send(new \App\Mail\UserApproved($user));
+
         \Alert::success('User approved successfully.')->flash();
         return redirect()->back();
     }
