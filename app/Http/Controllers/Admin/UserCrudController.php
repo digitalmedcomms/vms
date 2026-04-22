@@ -89,7 +89,11 @@ class UserCrudController extends CrudController
         $user->save();
         
         //On approve send email to user informing that the account is approved
-        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserApproved($user));
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\AccountApproved($user));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('User approval email failed: ' . $e->getMessage());
+        }
 
         \Alert::success('User approved successfully.')->flash();
         return redirect()->back();
@@ -100,7 +104,13 @@ class UserCrudController extends CrudController
         $user = \App\Models\User::findOrFail($id);
         $user->status = 100;
         $user->save();
-        
+
+        //On reject send email to user informing that the account is rejected
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\AccountRejected($user));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('User rejection email failed: ' . $e->getMessage());
+        }
         \Alert::warning('User rejected.')->flash();
         return redirect()->back();
     }
