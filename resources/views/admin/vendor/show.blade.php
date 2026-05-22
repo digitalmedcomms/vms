@@ -90,16 +90,20 @@
                                         <thead class="bg-light">
                                             <tr>
                                                 <th>Name</th>
+                                                <th>Job Title</th>
                                                 <th>Number</th>
                                                 <th>Email</th>
+                                                <th>Address</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($entry->contacts as $contact)
                                                 <tr>
                                                     <td>{{ ($contact['name'] ?? '') ?: 'N/A' }}</td>
+                                                    <td>{{ ($contact['title'] ?? '') ?: 'N/A' }}</td>
                                                     <td>{{ ($contact['number'] ?? '') ?: 'N/A' }}</td>
                                                     <td>{{ ($contact['email'] ?? '') ?: 'N/A' }}</td>
+                                                    <td>{{ ($contact['address'] ?? '') ?: 'N/A' }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

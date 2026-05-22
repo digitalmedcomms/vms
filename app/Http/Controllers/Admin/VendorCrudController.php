@@ -43,6 +43,8 @@ class VendorCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        $this->crud->setListView('admin.vendor.list');
+
         CRUD::column('name');
         CRUD::column('average_rating')
             ->view('vendor.backpack.ui.columns.star_rating')
@@ -50,6 +52,29 @@ class VendorCrudController extends CrudController
         CRUD::column('country_id')->type('select')->label('Country')->entity('country')->attribute('name')->model('App\Models\Country');
         CRUD::column('types')->type('select_multiple')->label('Types')->entity('types')->attribute('name')->model('App\Models\VendorType');
         CRUD::column('status')->type('select_from_array')->options([0 => 'Inactive', 1 => 'Active']);
+
+        // Apply custom query filters if parameters are present in the request
+        $request = $this->crud->getRequest();
+
+        if ($request->filled('country_id')) {
+            $this->crud->addClause('where', 'country_id', $request->input('country_id'));
+        }
+
+        if ($request->filled('type_id')) {
+            $typeId = $request->input('type_id');
+            $this->crud->addClause('whereHas', 'types', function ($query) use ($typeId) {
+                $query->where('tbl_vendor_types.id', $typeId);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            if ($status === 'active') {
+                $this->crud->addClause('where', 'status', 1);
+            } elseif ($status === 'inactive') {
+                $this->crud->addClause('where', 'status', 0);
+            }
+        }
     }
 
     /**

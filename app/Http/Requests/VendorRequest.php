@@ -72,8 +72,10 @@ class VendorRequest extends FormRequest
             // Remove completely empty rows
             $contacts = array_filter($contacts, fn($c) =>
                 !empty(trim($c['name'] ?? '')) ||
+                !empty(trim($c['title'] ?? '')) ||
                 !empty(trim($c['number'] ?? '')) ||
-                !empty(trim($c['email'] ?? ''))
+                !empty(trim($c['email'] ?? '')) ||
+                !empty(trim($c['address'] ?? ''))
             );
 
             if (empty($contacts)) {
