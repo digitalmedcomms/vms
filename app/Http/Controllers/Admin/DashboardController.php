@@ -10,7 +10,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $highestRatedVendor = Vendor::select('tbl_vendors.*')
+        $highestRatedVendor = Vendor::with(['types', 'country'])
+            ->select('tbl_vendors.*')
             ->leftJoin('tbl_vendor_comments', 'tbl_vendors.id', '=', 'tbl_vendor_comments.vendor_id')
             ->groupBy('tbl_vendors.id')
             ->selectRaw('AVG(tbl_vendor_comments.rating) as average_rating')
@@ -21,16 +22,18 @@ class DashboardController extends Controller
         $totalComments = \App\Models\VendorComment::count();
         $averageRating = \App\Models\VendorComment::avg('rating') ?: 0;
         
-        $mostCommentedVendor = Vendor::select('tbl_vendors.*', DB::raw('count(tbl_vendor_comments.id) as comment_count'))
+        $mostCommentedVendor = Vendor::with(['types', 'country'])
+            ->select('tbl_vendors.*', DB::raw('count(tbl_vendor_comments.id) as comment_count'))
             ->leftJoin('tbl_vendor_comments', 'tbl_vendors.id', '=', 'tbl_vendor_comments.vendor_id')
             ->groupBy('tbl_vendors.id')
             ->orderByDesc('comment_count')
             ->first();
 
-        $recentlyAddedVendor = Vendor::orderByDesc('created_when')
+        $recentlyAddedVendor = Vendor::with(['types', 'country'])
+            ->orderByDesc('created_when')
             ->first();
 
-        $recentComments = \App\Models\VendorComment::with(['vendor', 'user'])
+        $recentComments = \App\Models\VendorComment::with(['vendor.types', 'vendor.country', 'user'])
             ->orderByDesc('insert_date')
             ->limit(5)
             ->get();

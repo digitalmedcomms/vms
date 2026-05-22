@@ -48,7 +48,7 @@ class VendorCrudController extends CrudController
             ->view('vendor.backpack.ui.columns.star_rating')
             ->label('Rating');
         CRUD::column('country_id')->type('select')->label('Country')->entity('country')->attribute('name')->model('App\Models\Country');
-        CRUD::column('vendor_type_id')->type('select')->label('Type')->entity('type')->attribute('name')->model('App\Models\VendorType');
+        CRUD::column('types')->type('select_multiple')->label('Types')->entity('types')->attribute('name')->model('App\Models\VendorType');
         CRUD::column('status')->type('select_from_array')->options([0 => 'Inactive', 1 => 'Active']);
     }
 
@@ -76,13 +76,12 @@ class VendorCrudController extends CrudController
             ->type('textarea')
             ->label('Address');
 
-        CRUD::field('vendor_type_id')
-            ->type('select')
-            ->label('Vendor Type')
-            ->entity('type')
+        CRUD::field('types')
+            ->type('select_multiple')
+            ->label('Vendor Types')
+            ->entity('types')
             ->attribute('name')
-            ->model('App\Models\VendorType')
-            ->placeholder('-- Select Vendor Type --');
+            ->model('App\Models\VendorType');
 
         CRUD::field('country_id')
             ->type('select')
@@ -93,8 +92,8 @@ class VendorCrudController extends CrudController
             ->placeholder('-- Select Country --');
 
         CRUD::field('tin')
-            ->label('TIN')
-            ->attributes(['placeholder' => 'TIN']);
+            ->label('Tax Information Number')
+            ->attributes(['placeholder' => 'Tax Information Number']);
 
         CRUD::field('contacts')
             ->type('view')

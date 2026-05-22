@@ -37,8 +37,13 @@
                             </div>
                         @endif
                         <h3 class="mb-0">{{ $entry->name }}</h3>
-                        <div class="text-muted mb-2">
-                           <i class="la la-building"></i> {{ $entry->type->name ?? 'N/A' }}
+                        <div class="mb-2">
+                           <i class="la la-building text-muted mr-1"></i>
+                           @forelse($entry->types as $type)
+                               <span class="badge badge-info text-white" style="margin-right: 3px; font-weight: 500;">{{ $type->name }}</span>
+                           @empty
+                               <span class="text-muted">N/A</span>
+                           @endforelse
                         </div>
                         <div class="badge badge-{{ $entry->status ? 'success' : 'secondary' }}">
                             {{ $entry->status ? 'Active' : 'Inactive' }}
@@ -49,6 +54,16 @@
                             <div class="col-md-6 mb-3">
                                 <label class="font-weight-bold text-uppercase small text-muted">Country</label>
                                 <p class="mb-0 h6">{{ $entry->country->name ?? 'N/A' }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="font-weight-bold text-uppercase small text-muted">Vendor Types</label>
+                                <p class="mb-0">
+                                    @forelse($entry->types as $type)
+                                        <span class="badge badge-info " style="color: #2c2950; margin-right: 3px; font-weight: 500;">{{ $type->name }}</span>
+                                    @empty
+                                        <span class="text-muted small">N/A</span>
+                                    @endforelse
+                                </p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="font-weight-bold text-uppercase small text-muted">Website</label>
@@ -65,7 +80,7 @@
                                 <p class="mb-0 h6">{!!$entry->address ?? 'N/A' !!}</p>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="font-weight-bold text-uppercase small text-muted">TIN</label>
+                                <label class="font-weight-bold text-uppercase small text-muted">Tax Information Number (TIN)</label>
                                 <p class="mb-0 h6">{{ $entry->tin ?? 'N/A' }}</p>
                             </div>
                             <div class="col-md-12 mb-3">
@@ -95,7 +110,7 @@
                             </div>
                             {{-- Documents --}}
                             <div class="col-md-12 mb-3">
-                                <label class="font-weight-bold text-uppercase small text-muted">Documents & Files</label>
+                                <label class="font-weight-bold text-uppercase small text-muted">Rate Card & Additional Information</label>
                                 @php $docs = $entry->documents ?? []; @endphp
                                 @if(count($docs) > 0)
                                     <table class="table table-sm table-bordered mt-1">

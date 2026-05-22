@@ -16,7 +16,7 @@
                                 @include($crud->getFirstFieldView($fields['name']['type'], $fields['name']['view_namespace'] ?? false), ['field' => $fields['name']])
                             </div>
                             <div class="col-md-6 mb-3">
-                                @include($crud->getFirstFieldView($fields['vendor_type_id']['type'], $fields['vendor_type_id']['view_namespace'] ?? false), ['field' => $fields['vendor_type_id']])
+                                @include($crud->getFirstFieldView($fields['types']['type'], $fields['types']['view_namespace'] ?? false), ['field' => $fields['types']])
                             </div>
                             <div class="col-md-6 mb-3">
                                 @include($crud->getFirstFieldView($fields['country_id']['type'], $fields['country_id']['view_namespace'] ?? false), ['field' => $fields['country_id']])
@@ -66,7 +66,7 @@
     <div class="col-md-12 mb-4">
         <div class="card border-0 shadow-sm rounded-lg overflow-hidden">
             <div class="card-header text-white py-3" style="background:#6f42c1;">
-                <h5 class="mb-0"><i class="la la-paperclip"></i> Documents & Files</h5>
+                <h5 class="mb-0"><i class="la la-paperclip"></i> Rate Card & Additional Information</h5>
             </div>
             <div class="card-body p-4">
                 @include('admin.vendor.fields.vendor_documents', ['field' => $fields['vendor_documents'] ?? []])

@@ -27,7 +27,8 @@ class VendorRequest extends FormRequest
         return [
             'name'                   => 'required|min:3|max:255',
             'country_id'             => 'required|integer',
-            'vendor_type_id'         => 'required|integer',
+            'types'                  => 'required|array',
+            'types.*'                => 'integer|exists:tbl_vendor_types,id',
             'website_url'            => 'nullable|url|max:255',
             'logo'                   => $this->hasFile('logo') ? 'image|max:2048' : 'nullable',
             'vendor_documents'       => 'nullable',

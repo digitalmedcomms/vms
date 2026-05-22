@@ -18,7 +18,6 @@ class Vendor extends Model
         'name',
         'logo',
         'country_id',
-        'vendor_type_id',
         'address',
         'tin',
         'contact_person',
@@ -59,9 +58,9 @@ class Vendor extends Model
         return $this->belongsTo(Country::class, 'country_id');
     }
 
-    public function type()
+    public function types()
     {
-        return $this->belongsTo(VendorType::class, 'vendor_type_id');
+        return $this->belongsToMany(VendorType::class, 'tbl_vendor_vendor_types', 'vendor_id', 'vendor_type_id');
     }
 
     public function comments()

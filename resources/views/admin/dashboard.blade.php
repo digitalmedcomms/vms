@@ -76,7 +76,7 @@
                         <div class="h5 mb-3 text-warning">
                             @include('vendor.backpack.ui.columns.star_rating', ['column' => ['value' => number_format($highestRatedVendor->average_rating, 1)]])
                         </div>
-                        <p class="text-muted small mb-3">{{ $highestRatedVendor->type->name ?? '' }} | {{ $highestRatedVendor->country->name ?? '' }}</p>
+                        <p class="text-muted small mb-3">{{ $highestRatedVendor->types->pluck('name')->implode(', ') }} | {{ $highestRatedVendor->country->name ?? '' }}</p>
                         <a href="{{ backpack_url('vendor/' . $highestRatedVendor->id . '/show') }}" class="btn btn-primary btn-sm rounded-pill px-4 mt-auto">
                             View Profile
                         </a>
@@ -108,7 +108,7 @@
                                 <i class="la la-comment mr-1"></i> {{ $mostCommentedVendor->comment_count }} Comments
                             </span>
                         </div>
-                        <p class="text-muted small mb-3">{{ $mostCommentedVendor->type->name ?? '' }} | {{ $mostCommentedVendor->country->name ?? '' }}</p>
+                        <p class="text-muted small mb-3">{{ $mostCommentedVendor->types->pluck('name')->implode(', ') }} | {{ $mostCommentedVendor->country->name ?? '' }}</p>
                         <a href="{{ backpack_url('vendor/' . $mostCommentedVendor->id . '/show') }}" class="btn btn-outline-primary btn-sm rounded-pill px-4 mt-auto">
                             View Profile
                         </a>
@@ -140,7 +140,7 @@
                                 <i class="la la-calendar mr-1"></i> Added {{ \Carbon\Carbon::parse($recentlyAddedVendor->created_when)->diffForHumans() }}
                             </span>
                         </div>
-                        <p class="text-muted small mb-3">{{ $recentlyAddedVendor->type->name ?? '' }} | {{ $recentlyAddedVendor->country->name ?? '' }}</p>
+                        <p class="text-muted small mb-3">{{ $recentlyAddedVendor->types->pluck('name')->implode(', ') }} | {{ $recentlyAddedVendor->country->name ?? '' }}</p>
                         <a href="{{ backpack_url('vendor/' . $recentlyAddedVendor->id . '/show') }}" class="btn btn-outline-info btn-sm rounded-pill px-4 mt-auto">
                             View Profile
                         </a>

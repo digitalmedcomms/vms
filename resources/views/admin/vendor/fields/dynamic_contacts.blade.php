@@ -16,8 +16,10 @@
             <thead class="bg-light text-center text-uppercase small font-weight-bold">
                 <tr>
                     <th>Name</th>
+                    <th>Job Title</th>
                     <th>Number</th>
                     <th>Email</th>
+                    <th>Address</th>
                     <th style="width: 40px;"></th>
                 </tr>
             </thead>
@@ -67,11 +69,13 @@
         var rows   = body.querySelectorAll('tr');
         var result = [];
         rows.forEach(function(row) {
-            var name   = row.querySelector('.contact-name').value.trim();
-            var number = row.querySelector('.contact-number').value.trim();
-            var email  = row.querySelector('.contact-email').value.trim();
-            if (name || number || email) {
-                result.push({ name: name, number: number, email: email });
+            var name    = row.querySelector('.contact-name').value.trim();
+            var title   = row.querySelector('.contact-title').value.trim();
+            var number  = row.querySelector('.contact-number').value.trim();
+            var email   = row.querySelector('.contact-email').value.trim();
+            var address = row.querySelector('.contact-address').value.trim();
+            if (name || title || number || email || address) {
+                result.push({ name: name, title: title, number: number, email: email, address: address });
             }
         });
         input.value = JSON.stringify(result);
@@ -106,8 +110,10 @@
         var tr = document.createElement('tr');
         tr.innerHTML =
             '<td><input type="text" class="form-control form-control-sm contact-name" value="' + escAttr(contact.name) + '" placeholder="Full Name"></td>' +
+            '<td><input type="text" class="form-control form-control-sm contact-title" value="' + escAttr(contact.title) + '" placeholder="Job Title"></td>' +
             '<td><input type="text" class="form-control form-control-sm contact-number" value="' + escAttr(contact.number) + '" placeholder="Phone Number"></td>' +
             '<td><input type="email" class="form-control form-control-sm contact-email" value="' + escAttr(contact.email) + '" placeholder="Email Address"></td>' +
+            '<td><input type="text" class="form-control form-control-sm contact-address" value="' + escAttr(contact.address) + '" placeholder="Address"></td>' +
             '<td class="text-center align-middle"><i class="la la-trash remove-contact-btn" title="Remove"></i></td>';
 
         tr.querySelector('.remove-contact-btn').addEventListener('click', function() {
