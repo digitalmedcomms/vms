@@ -19,6 +19,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 @include($crud->getFirstFieldView($fields['types']['type'], $fields['types']['view_namespace'] ?? false), ['field' => $fields['types']])
+                                <small><em>Kindly select the applicable vendor category or categories.<br>Multiple vendor types may be selected.</em></small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 @include($crud->getFirstFieldView($fields['country_id']['type'], $fields['country_id']['view_namespace'] ?? false), ['field' => $fields['country_id']])
