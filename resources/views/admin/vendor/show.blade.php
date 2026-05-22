@@ -158,6 +158,15 @@
                                 @else
                                     <p class="mb-0 h6 text-muted">No documents uploaded.</p>
                                 @endif
+
+                                @if($entry->document_comments)
+                                    <div class="mt-3 p-3 bg-light rounded border">
+                                        <label class="font-weight-bold text-uppercase small text-muted d-block mb-1">
+                                            <i class="la la-comment-alt mr-1"></i> Comments
+                                        </label>
+                                        <div class="mb-0 text-dark" style="white-space: pre-wrap; font-size: 0.9rem;">{{ $entry->document_comments }}</div>
+                                    </div>
+                                @endif
                             </div>
 
                         </div>

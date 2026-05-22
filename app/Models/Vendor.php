@@ -34,6 +34,7 @@ class Vendor extends Model
         'updated_when',
         'contacts',
         'documents',
+        'document_comments',
     ];
 
     protected $casts = [

@@ -1,5 +1,6 @@
 @php
-    $existingDocs    = $crud->getCurrentEntry()?->documents ?? [];
+    $entry           = $crud->getCurrentEntry();
+    $existingDocs    = ($entry && is_object($entry)) ? ($entry->documents ?? []) : [];
     $removedDocsJson = old('remove_documents', '[]');
     $field_id        = 'field_vendor_documents';
     $todayDisplay    = now()->format('M d, Y');   // for display only
@@ -58,6 +59,11 @@
         <button type="button" id="{{ $field_id }}_add_btn" class="btn btn-sm btn-outline-primary">
             <i class="la la-plus"></i> Add Document
         </button>
+
+        <div class="form-group mt-4">
+            <label for="document_comments" style="font-weight: 500; color: #495057;"><i class="la la-comment-alt mr-1"></i> Comments</label>
+            <textarea name="document_comments" id="document_comments" class="form-control" rows="3" placeholder="Enter comments or remarks about the documents...">{{ old('document_comments', ($entry && is_object($entry)) ? $entry->document_comments : null) }}</textarea>
+        </div>
     </div>
 
     @if(isset($field['hint']))

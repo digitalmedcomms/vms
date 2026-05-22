@@ -130,6 +130,9 @@ class VendorCrudController extends CrudController
             ->view('admin.vendor.fields.vendor_documents')
             ->label('Documents');
 
+        CRUD::field('document_comments')
+            ->type('hidden');
+
         CRUD::field('website_url')
             ->type('url')
             ->label('Website URL')
@@ -350,6 +353,7 @@ class VendorCrudController extends CrudController
         CRUD::column('address')->type('textarea');
         CRUD::column('tin')->label('TIN');
         CRUD::column('contact_person');
+        CRUD::column('document_comments')->type('textarea')->label('Document Comments');
 
         // Display Comments
         CRUD::column('comments_section')
