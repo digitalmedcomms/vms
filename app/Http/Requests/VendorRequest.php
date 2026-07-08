@@ -30,6 +30,8 @@ class VendorRequest extends FormRequest
             'types'                  => 'required|array',
             'types.*'                => 'integer|exists:tbl_vendor_types,id',
             'website_url'            => 'nullable|url|max:255',
+            'with_signed_mims_nda'   => 'nullable|boolean',
+            'portfolio_link'         => 'nullable|string|max:500',
             'logo'                   => $this->hasFile('logo') ? 'image|max:2048' : 'nullable',
             'vendor_documents'       => 'nullable',
             'vendor_documents.*'     => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,zip|max:10240',

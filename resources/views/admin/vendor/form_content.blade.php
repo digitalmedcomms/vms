@@ -48,6 +48,12 @@
                     <div class="col-md-6 mb-3">
                         @include($crud->getFirstFieldView($fields['status']['type'], $fields['status']['view_namespace'] ?? false), ['field' => $fields['status']])
                     </div>
+                    <div class="col-md-6 mb-3">
+                        @include($crud->getFirstFieldView($fields['with_signed_mims_nda']['type'], $fields['with_signed_mims_nda']['view_namespace'] ?? false), ['field' => $fields['with_signed_mims_nda']])
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        @include($crud->getFirstFieldView($fields['portfolio_link']['type'], $fields['portfolio_link']['view_namespace'] ?? false), ['field' => $fields['portfolio_link']])
+                    </div>
                 </div>
             </div>
         </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | VMS</title>
+    <title>Forgot Password | VMS</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <style>
         :root {
@@ -13,6 +13,7 @@
             --text: #34495e;
             --white: #ffffff;
             --error: #e74c3c;
+            --success: #2ecc71;
         }
 
         * {
@@ -31,7 +32,7 @@
             overflow: hidden;
         }
 
-        .login-container {
+        .forgot-container {
             background: var(--white);
             width: 100%;
             max-width: 400px;
@@ -66,6 +67,7 @@
             color: #7f8c8d;
             font-size: 14px;
             margin-bottom: 30px;
+            line-height: 1.5;
         }
 
         .form-group {
@@ -125,33 +127,16 @@
             margin-top: 5px;
         }
 
-        .remember-me {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #7f8c8d;
+        .status-message {
+            background: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+            padding: 12px;
+            border-radius: 6px;
             margin-bottom: 20px;
-        }
-
-        .remember-me .checkbox-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .remember-me input {
-            width: auto;
-            margin-right: 8px;
-        }
-
-        .remember-me a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .remember-me a:hover {
-            text-decoration: underline;
+            font-size: 14px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            text-align: left;
+            line-height: 1.4;
         }
 
         .footer-links {
@@ -163,6 +148,7 @@
         .footer-links a {
             color: var(--accent);
             text-decoration: none;
+            font-weight: 600;
         }
 
         .footer-links a:hover {
@@ -171,20 +157,20 @@
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="forgot-container">
         <div class="logo">
             <img src="/images/mimsLogo-mini.png" alt="MIMS Logo">
         </div>
-        <h1>Welcome Back</h1>
-        <p class="subtitle">Please enter your details to sign in.</p>
+        <h1>Forgot Password</h1>
+        <p class="subtitle">Enter your email address and we'll send you a link to reset your password.</p>
 
-        @if(session('success'))
-            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; border: 1px solid #c3e6cb;">
-                {{ session('success') }}
+        @if (session('status'))
+            <div class="status-message">
+                {{ session('status') }}
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('password.email') }}">
             @csrf
             <div class="form-group">
                 <label for="email">Email Address</label>
@@ -194,27 +180,11 @@
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required placeholder="••••••••">
-                @error('password')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="remember-me">
-                <div class="checkbox-container">
-                    <input type="checkbox" name="remember" id="remember">
-                    <label for="remember" style="margin-bottom: 0;">Remember me</label>
-                </div>
-                <a href="{{ route('password.request') }}">Forgot Password?</a>
-            </div>
-
-            <button type="submit" class="btn">Sign In</button>
+            <button type="submit" class="btn">Send Password Reset Link</button>
         </form>
 
         <div class="footer-links">
-            <p>Don't have an account? <a href="{{ route('register') }}">Create Account</a></p>
+            <p>Back to <a href="{{ route('login') }}">Sign In</a></p>
             <div style="margin-top: 15px;">
                 &copy; {{ date('Y') }} MIMS VMS.
             </div>

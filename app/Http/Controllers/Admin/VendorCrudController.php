@@ -138,6 +138,15 @@ class VendorCrudController extends CrudController
             ->label('Website URL')
             ->attributes(['placeholder' => 'Website URL']);
 
+        CRUD::field('with_signed_mims_nda')
+            ->type('checkbox')
+            ->label('with Signed MIMS NDA');
+
+        CRUD::field('portfolio_link')
+            ->type('text')
+            ->label('Portfolio link (Previous projects with MIMS)')
+            ->attributes(['placeholder' => 'Portfolio link']);
+
         CRUD::field('status')
             ->type('select_from_array')
             ->options([1 => 'Active', 0 => 'Inactive'])
@@ -166,6 +175,9 @@ class VendorCrudController extends CrudController
         $this->crud->registerFieldEvents();
 
         $data = $this->crud->getStrippedSaveRequest($request);
+
+        // Checkbox values
+        $data['with_signed_mims_nda'] = $request->has('with_signed_mims_nda') ? 1 : 0;
 
         // Contacts
         if ($request->has('contacts')) {
@@ -209,6 +221,9 @@ class VendorCrudController extends CrudController
         $this->crud->registerFieldEvents();
 
         $data = $this->crud->getStrippedSaveRequest($request);
+
+        // Checkbox values
+        $data['with_signed_mims_nda'] = $request->has('with_signed_mims_nda') ? 1 : 0;
 
         // Contacts
         if ($request->has('contacts')) {
@@ -353,6 +368,12 @@ class VendorCrudController extends CrudController
         CRUD::column('address')->type('textarea');
         CRUD::column('tin')->label('TIN');
         CRUD::column('contact_person');
+        CRUD::column('with_signed_mims_nda')
+            ->type('boolean')
+            ->label('with Signed MIMS NDA');
+        CRUD::column('portfolio_link')
+            ->type('url')
+            ->label('Portfolio link (Previous projects with MIMS)');
         CRUD::column('document_comments')->type('textarea')->label('Document Comments');
 
         // Display Comments

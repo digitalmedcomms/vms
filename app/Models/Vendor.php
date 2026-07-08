@@ -28,6 +28,8 @@ class Vendor extends Model
         'contact_number_2',
         'status',
         'website_url',
+        'with_signed_mims_nda',
+        'portfolio_link',
         'created_by',
         'created_when',
         'updated_by',

@@ -83,6 +83,26 @@
                                 <label class="font-weight-bold text-uppercase small text-muted">Tax Information Number (TIN)</label>
                                 <p class="mb-0 h6">{{ $entry->tin ?? 'N/A' }}</p>
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="font-weight-bold text-uppercase small text-muted">Signed MIMS NDA</label>
+                                <p class="mb-0 h6">
+                                    @if($entry->with_signed_mims_nda)
+                                        <span class="text-success" style="font-weight: 600;"><i class="la la-check-circle"></i> Yes</span>
+                                    @else
+                                        <span class="text-muted" style="font-weight: 600;"><i class="la la-times-circle"></i> No</span>
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="font-weight-bold text-uppercase small text-muted">Portfolio Link (Previous projects with MIMS)</label>
+                                <p class="mb-0 h6">
+                                    @if($entry->portfolio_link)
+                                        <a href="{{ $entry->portfolio_link }}" target="_blank">{{ $entry->portfolio_link }} <i class="la la-external-link-alt"></i></a>
+                                    @else
+                                        N/A
+                                    @endif
+                                </p>
+                            </div>
                             <div class="col-md-12 mb-3">
                                 <label class="font-weight-bold text-uppercase small text-muted">Contact Information</label>
                                 @if($entry->contacts && count($entry->contacts))

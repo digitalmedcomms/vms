@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | VMS</title>
+    <title>Reset Password | VMS</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <style>
         :root {
@@ -31,7 +31,7 @@
             overflow: hidden;
         }
 
-        .login-container {
+        .reset-container {
             background: var(--white);
             width: 100%;
             max-width: 400px;
@@ -66,6 +66,7 @@
             color: #7f8c8d;
             font-size: 14px;
             margin-bottom: 30px;
+            line-height: 1.5;
         }
 
         .form-group {
@@ -125,35 +126,6 @@
             margin-top: 5px;
         }
 
-        .remember-me {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-
-        .remember-me .checkbox-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .remember-me input {
-            width: auto;
-            margin-right: 8px;
-        }
-
-        .remember-me a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .remember-me a:hover {
-            text-decoration: underline;
-        }
-
         .footer-links {
             margin-top: 30px;
             font-size: 13px;
@@ -163,6 +135,7 @@
         .footer-links a {
             color: var(--accent);
             text-decoration: none;
+            font-weight: 600;
         }
 
         .footer-links a:hover {
@@ -171,50 +144,43 @@
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="reset-container">
         <div class="logo">
             <img src="/images/mimsLogo-mini.png" alt="MIMS Logo">
         </div>
-        <h1>Welcome Back</h1>
-        <p class="subtitle">Please enter your details to sign in.</p>
+        <h1>Reset Password</h1>
+        <p class="subtitle">Enter your email and define your new password below.</p>
 
-        @if(session('success'))
-            <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; border: 1px solid #c3e6cb;">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('password.update') }}">
             @csrf
+            <input type="hidden" name="token" value="{{ $token }}">
+
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="name@example.com">
+                <input type="email" id="email" name="email" value="{{ old('email', $email) }}" required autofocus placeholder="name@example.com">
                 @error('email')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">New Password</label>
                 <input type="password" id="password" name="password" required placeholder="••••••••">
                 @error('password')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
 
-            <div class="remember-me">
-                <div class="checkbox-container">
-                    <input type="checkbox" name="remember" id="remember">
-                    <label for="remember" style="margin-bottom: 0;">Remember me</label>
-                </div>
-                <a href="{{ route('password.request') }}">Forgot Password?</a>
+            <div class="form-group">
+                <label for="password_confirmation">Confirm Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="••••••••">
             </div>
 
-            <button type="submit" class="btn">Sign In</button>
+            <button type="submit" class="btn">Reset Password</button>
         </form>
 
         <div class="footer-links">
-            <p>Don't have an account? <a href="{{ route('register') }}">Create Account</a></p>
+            <p>Back to <a href="{{ route('login') }}">Sign In</a></p>
             <div style="margin-top: 15px;">
                 &copy; {{ date('Y') }} MIMS VMS.
             </div>
